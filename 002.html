@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/brython@3.10.0/brython.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/brython@3.10.0/brython_stdlib.js"
+    ></script>
+  </head>
+  <body onload="brython()">
+    <textarea id="code" cols="30" rows="10"></textarea>
+    <button id="butt">run</button>
+    <p id="result">result</p>
+    <script type="text/python">
+      from browser import document, run_script, window
+      # import editor
+
+      print('hello world')
+      def run(ev):
+        # print(running)
+        # print(document["code"].value)
+
+        # exec 대신 run_script 사용됨 그러나 콘솔에 출력(for문 등 모두 작동)
+        #
+        # for i in range(10):
+        #     print(i)
+        #
+        value = run_script(document["code"].value)
+        # print(window.console)
+
+        # value = document["code"].value
+        document["result"].textContent = window._run_brython_code
+
+      document["butt"].bind("click", run)
+    </script>
+  </body>
+</html>
