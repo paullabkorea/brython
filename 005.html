@@ -1,7 +1,12 @@
 <html>
   <head>
     <script type="text/javascript" src="brython.js"></script>
-	<script type="text/javascript" src="brython_stdlib.js"></script>
+	  <script type="text/javascript" src="brython_stdlib.js"></script>
+  <style>
+    .warnning {
+      color:red;
+    }
+  </style>
   </head>
   <body onload="brython()">
     <p id="version"></p>
@@ -10,7 +15,7 @@
     <textarea id="result">result</textarea>
     <script type="text/python">
         from browser import document
-        import io, sys
+        import io, sys, traceback
 
         def run(ev):
             codeOut = io.StringIO()
@@ -21,11 +26,16 @@
     
             sys.stdout = codeOut
             sys.stderr = codeErr
-            
-            exec(code)
-            
-            sys.stdout = sys.__stdout__
-            sys.stderr = sys.__stderr__
+
+            try: 
+              exec(code)
+              sys.stdout = sys.__stdout__
+              sys.stderr = sys.__stderr__
+            except Exception:
+              error_message = traceback.format_exc()
+              result.value = error_message
+              result.class_name = 'warnning'
+              return
             
             err = codeErr.getvalue()
             ex = codeOut.getvalue()
