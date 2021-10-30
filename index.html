@@ -56,8 +56,9 @@
             codeOut.close()
             codeErr.close()
 
-        info = sys.implementation.version
-        document['version'].text = f'{info.major}.{info.minor}.{info.micro}'
+        # info = sys.implementation.version
+        # document['version'].text = f'{info.major}.{info.minor}.{info.micro}'
+        document['version'].text = '3.7.5'
         document['butt'].bind('click', run)
     </script>
   </body>
