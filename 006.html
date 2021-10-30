@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <script type="text/javascript" src="brython.js"></script>
+	<script type="text/javascript" src="brython_stdlib.js"></script>
+  </head>
+  <body onload="brython()">
+    <p id="version"></p>
+    <textarea id="code" cols="30" rows="10"></textarea>
+    <button id="butt">run</button>
+    <textarea id="result">result</textarea>
+    <textarea id='error_message_textarea' style='color:red;width: 300px; height: 300px;'></textarea>
+        
+    <script type="text/python">
+    
+        from browser import document, window 
+        import traceback
+        
+        def run(event): 
+            try: 
+                exec(document['code'].value)
+            except Exception:
+                error_message=traceback.format_exc()
+                document['error_message_textarea'].value=error_message
+        
+        document['butt'].bind('click', run)
+        
+    </script>               
+  </body>
+</html>

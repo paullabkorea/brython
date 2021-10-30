@@ -1,0 +1,54 @@
+<html>
+    <!-- 실행 안됨 -->
+    <!-- https://github.com/brython-dev/brython/blob/master/www/tests/editor.py 참고 -->
+  <head>
+    <script type="text/javascript" src="brython.js"></script>
+	<script type="text/javascript" src="brython_stdlib.js"></script>
+  </head>
+  <body onload="brython()">
+    <p id="version"></p>
+    <textarea id="code" cols="30" rows="10"></textarea>
+    <button id="butt">run</button>
+    <textarea id="result">result</textarea>
+    <script type="text/python">
+        from browser import document
+        import io, sys
+        import javascript
+
+        def run(ev):
+            code = document["code"].value
+            result = document["result"]
+            
+            exec(code)
+            
+        class cOutput:
+            encoding = 'utf-8'
+        
+            def __init__(self):
+                self.cons = document["console"]
+                self.buf = ''
+        
+            def write(self, data):
+                self.buf += str(data)
+        
+            def flush(self):
+                self.cons.value += self.buf
+                self.buf = ''
+        
+            def __len__(self):
+                return len(self.buf)
+            
+        
+        cOut = cOutput()
+        sys.stdout = cOut
+        sys.stderr = cOut
+
+        info = sys.implementation.version
+        document['version'].text = f'{info.major}.{info.minor}.{info.micro}'
+        document["butt"].bind("click", run)
+        # print(document['console'])
+        # document["console"].value = ''
+        # document["console"].value = javascript.py2js(src, '__main__')
+    </script>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <script type="text/javascript" src="brython.js"></script>
+	<script type="text/javascript" src="brython_stdlib.js"></script>
+  </head>
+  <body onload="brython()">
+    <p id="version"></p>
+    <textarea id="code" cols="30" rows="10"></textarea>
+    <button id="butt">run</button>
+    <textarea id="result">result</textarea>
+    <script type="text/python">
+        from browser import document
+        import io, sys
+
+        def run(ev):
+            codeOut = io.StringIO()
+            codeErr = io.StringIO()
+
+            code = document["code"].value
+            result = document["result"]
+    
+            sys.stdout = codeOut
+            sys.stderr = codeErr
+            
+            exec(code)
+            
+            sys.stdout = sys.__stdout__
+            sys.stderr = sys.__stderr__
+            
+            err = codeErr.getvalue()
+            ex = codeOut.getvalue()
+            
+            if err:
+                result.value = f'{err}'
+            else:
+                result.value = f'{ex}'
+
+            codeOut.close()
+            codeErr.close()
+
+        info = sys.implementation.version
+        document['version'].text = f'{info.major}.{info.minor}.{info.micro}'
+        document["butt"].bind("click", run)
+    </script>
+  </body>
+</html>

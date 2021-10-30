@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <script 
+			type="text/javascript" 
+			src="brython.js">
+		</script>
+		<script 
+			type="text/javascript" 
+			src="brython_stdlib.js">
+		</script>
+  </head>
+  <body onload="brython()">
+    <textarea id="code" cols="30" rows="10"></textarea>
+    <button id="butt">run</button>
+    <textarea id="result">result</textarea>
+    <script type="text/python">
+      from browser import document, run_script, window, html
+      from browser.local_storage import storage
+
+      print('hello world')
+      def run(ev):
+        src = document["code"].value
+        storage["py_src"] = src
+        result = document["result"]
+        try:
+            ns = {'__name__':'__main__'}
+            exec(src, ns)
+            state = 1
+        except Exception as exc:
+            traceback.print_exc(file=sys.stderr)
+            state = 0
+        # res = run_script(document["code"].value)
+        document["result"].value = ns;
+
+      document["butt"].bind("click", run)
+    </script>
+  </body>
+</html>
