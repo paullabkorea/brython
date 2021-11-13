@@ -1,0 +1,195 @@
+<html>
+  <head>
+    <script type="text/javascript" src="brython.js"></script>
+	  <script type="text/javascript" src="brython_stdlib.js"></script>
+  <style>
+      /* 
+       회전판과 점프는 스튜디오밀의 flex와 grid 강의 참고했습니다.
+       감사해요 유준모 대표님! :)
+      */
+    @keyframes 회전판 {
+        from {
+            transform: rotateX(0deg) rotateZ(0deg);
+        }
+        
+        to {
+            transform: rotateX(50deg) rotateZ(-30deg);
+        }
+    }
+
+    @keyframes 점프 {
+		from {
+			transform: translateZ(30px) rotateX(-90deg) rotateY(0deg) scaleY(0.5);
+			/* transform: translateZ(30px) rotateX(-90deg) rotateY(360deg) scaleY(0.5); */
+		}
+		
+        to {
+			transform: translateZ(150px) rotateX(-90deg);
+			/* transform: translateZ(120px) rotateX(-90deg) rotateY(360deg); */
+		}
+	}
+
+    body {
+        /* perspective: 500px; */
+        display: flex;
+        background:burlywood;
+	}
+
+    .warnning {
+      color:red;
+    }
+
+    .field {
+        position: relative;
+        top: 20vh;
+        left: 20vw;
+    }
+
+    .licatobject {
+        margin-left: 15px;
+        width: 70px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        transition: all .5s;
+    }
+
+    .container {
+        display: grid;
+        grid-template-rows: repeat(5, 1fr);
+        grid-template-columns: repeat(5, 1fr);
+        transform: rotateX(0deg) rotateZ(0deg);
+        transform-style: preserve-3d;
+        animation: 회전판 2s 0.5s forwards;
+        width: 500px;
+        height: 500px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        transition: all .5s;
+    }
+
+    .item {
+        position: relative;
+        box-sizing: border-box;
+		border: 1px solid black;
+		transform-style: preserve-3d;
+        background-color:white;
+    }
+    #code {
+        display: block;
+        height: 90vh;
+        width: 20vw;
+    }
+    #butt {
+        display: block;
+        border: solid 2px black;
+        width: 20vw;
+        padding: 5px;
+    }
+    #result {
+        display: block;
+        height: 90vh;
+        width: 20vw;
+    }
+    img {
+        animation: 점프 0.4s infinite alternate;
+    }
+  </style>
+  </head>
+  <body onload="brython()">
+    <div class="code-input">
+        <textarea id="code"></textarea>
+        <button id="butt">run</button>
+        <p id="version"></p>
+    </div>
+    <textarea id="result">result</textarea>
+    <div class="field">
+        <div id="grid" class="container">
+            <div class="item">A1</div>
+            <img id="licatobj" class="licatobject" src="licat.png" alt="">
+            <div class="item">A2</div>
+            <div class="item">A3</div>
+            <div class="item">A4</div>
+            <div class="item">A5</div>
+            <div class="item">B1</div>
+            <div class="item">B2</div>
+            <div class="item">B3</div>
+            <div class="item">B4</div>
+            <div class="item">B5</div>
+            <div class="item">C1</div>
+            <div class="item">C2</div>
+            <div class="item">C3</div>
+            <div class="item">C4</div>
+            <div class="item">C5</div>
+            <div class="item">D1</div>
+            <div class="item">D2</div>
+            <div class="item">D3</div>
+            <div class="item">D4</div>
+            <div class="item">D5</div>
+            <div class="item">E1</div>
+            <div class="item">E2</div>
+            <div class="item">E3</div>
+            <div class="item">E4</div>
+            <div class="item">E5</div>
+        </div>
+    </div>
+    <script type="text/python">
+        from browser import document
+        import io, sys, traceback
+
+        x = 0
+        y = 0
+
+        def move():
+            global x
+            x += 100
+            licat = document['licatobj']
+            licat.left = x
+
+        def line(data):
+            resultdata = []
+            splitdata = data.split('\n')
+            for i, j in zip(splitdata, range(1, len(splitdata))):
+                resultdata.append(f'{j} {i}\n')
+            return ''.join(resultdata)
+                    
+        def run(ev):
+            codeOut = io.StringIO()
+            codeErr = io.StringIO()
+
+            code = document['code'].value
+            result = document['result']
+    
+            sys.stdout = codeOut
+            sys.stderr = codeErr
+
+            try: 
+              exec(code)
+              sys.stdout = sys.__stdout__
+              sys.stderr = sys.__stderr__
+            except Exception:
+              error_message = traceback.format_exc()
+              result.value = error_message
+              result.class_name = 'warnning'
+              return
+            
+            
+            err = line(codeErr.getvalue())
+            ex = line(codeOut.getvalue())
+            
+            if err:
+                result.value = f'{err}'
+            else:
+                result.value = f'{ex}'
+
+            codeOut.close()
+            codeErr.close()
+
+        # info = sys.implementation.version
+        # document['version'].text = f'{info.major}.{info.minor}.{info.micro}'
+        document['version'].text = '3.7.5'
+        document['butt'].bind('click', run)
+    </script>
+  </body>
+</html>
